@@ -11,11 +11,11 @@ ext.classifier      = ''      // ':jdk8'
 sourceCompatibility = 1.8     // 1.7
 targetCompatibility = 1.8     // 1.7
 
-ext.h2Ver           = '1.4.185'
+ext.h2Ver           = '1.4.187'
 ext.comsatVer       = '0.4.0-SNAPSHOT'
 ext.quasarVer       = '0.7.1-SNAPSHOT'
 ext.junitVer        = '4.12'
-ext.slf4jVer        = '1.7.10'
+ext.slf4jVer        = '1.7.12'
 ext.metricsVer      = '3.1.2'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -57,7 +57,6 @@ applicationDefaultJvmArgs = [
         "-javaagent:${configurations.quasar.singleFile}", // =vdc
         "-Dco.paralleluniverse.fibers.detectRunawayFibers=false",
         "-Dco.paralleluniverse.fibers.verifyInstrumentation=true",
-//        "-Dco.paralleluniverse.fibers.writeInstrumentedClassesStartingWith=org/apache/tomcat/jdbc/pool",
         "-Ddropwizard.config=build/resources/main/conf.yml"
 ]
 
