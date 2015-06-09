@@ -24,7 +24,7 @@ import static org.jooq.impl.DSL.*;
 
 public class Main extends FiberApplication<Main.JModernConfiguration> {
     public static void main(String[] args) throws Exception {
-        new Main().run("server", System.getProperty("dropwizard.config"));
+        new Main().run(new String[] { "server", System.getProperty("dropwizard.config") });
     }
 
     @Override
