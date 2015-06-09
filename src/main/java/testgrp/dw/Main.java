@@ -25,6 +25,10 @@ public class Main extends io.dropwizard.Application<Main.JModernConfiguration> {
     }
 
     @Override
+    public void initialize(Bootstrap<JModernConfiguration> bootstrap) {
+    }
+
+    @Override
     public void run(JModernConfiguration cfg, Environment env) throws ClassNotFoundException, SQLException {
         JmxReporter.forRegistry(env.metrics()).build().start(); // JMX reporting
         DataSource ds = cfg.getDataSourceFactory().build(env.metrics(), "db"); // Dropwizard will monitor the connection pool
