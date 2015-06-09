@@ -1,99 +1,58 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.bmuschko:gradle-cargo-plugin:2.0.3'
-    }
-}
-
 apply plugin: 'java'
+apply plugin: 'application'
 
-apply from: 'gradle/props.gradle'
+group               = 'testgrp'
+version             = '0.1.0-SNAPSHOT'
+status              = 'integration'
+
+ext.containerPort   = 8080
+
+ext.classifier      = ''      // ':jdk8'
+sourceCompatibility = 1.8     // 1.7
+targetCompatibility = 1.8     // 1.7
+
+ext.jooqVer         = '3.6.2'
+ext.dropwizardVer   = '0.8.1'
+ext.slf4jVer        = '1.7.12'
+ext.h2Ver           = '1.4.187'
+ext.junitVer        = '4.12'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 configurations {
-    provided
-}
-
-sourceSets {
-    main.compileClasspath = main.compileClasspath + configurations.provided
-    test.compileClasspath = test.compileClasspath + configurations.provided
-    test.runtimeClasspath = test.runtimeClasspath + configurations.provided
+    quasar
 }
 
 configurations.all {
     resolutionStrategy {
         failOnVersionConflict()
-        force "com.google.guava:guava:$guavaVer"
-
-        force "com.fasterxml.jackson.core:jackson-core:$jacksonVer"
-        force "com.fasterxml.jackson.core:jackson-databind:$jacksonVer"
-        force "com.fasterxml.jackson.core:jackson-annotations:$jacksonVer"
-        force "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:$jacksonVer"
-        force "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVer"
 
         force "org.slf4j:slf4j-api:$slf4jVer"
-        force "xml-apis:xml-apis:$xmlAPIsVer"
     }
 }
 
 repositories {
-//    mavenLocal()
+    mavenLocal()
     mavenCentral()
-//    maven { url "https://oss.sonatype.org/content/repositories/releases" }
-//    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-//    maven { url 'https://maven.java.net/content/repositories/snapshots' }
-}
-
-test {
-    beforeTest { desc ->
-        logger.quiet("Running test: " + desc)
-    }
-
-    afterTest { desc, result ->
-        if(result.resultType == TestResult.ResultType.FAILURE) {
-            logger.quiet("Failed test ${desc.name} [${desc.className}] with exception: ${result.exception}")
-            if(result.exception != null) {
-                result.exception.printStackTrace()
-            }
-        }
-    }
 }
 
 dependencies {
-    compile "com.h2database:h2:$h2Ver"
-    compile "org.glassfish.jersey.core:jersey-server:$jerseyVer"
-    compile "org.glassfish.jersey.containers:jersey-container-servlet:$jerseyVer"
-    compile "com.netflix.feign:feign-core:$feignVer"
-    compile "org.apache.httpcomponents:httpclient:$httpClientVer"
-    compile ("com.netflix.feign:feign-jaxrs:$feignVer") {
-        exclude group: 'javax.ws.rs', module: 'jsr311-api'
-    }
-    compile ("com.netflix.feign:feign-jackson:$feignVer") {
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-    }
-    compile "org.glassfish.jersey.media:jersey-media-json-jackson:$jerseyVer"
+    compile "org.jooq:jooq:$jooqVer"
     compile "io.dropwizard:dropwizard-core:$dropwizardVer"
-    compile "io.dropwizard:dropwizard-jdbi:$dropwizardVer"
+    compile "io.dropwizard:dropwizard-db:$dropwizardVer"
 
-    provided "javax.servlet:javax.servlet-api:$servletVer"
-
-    runtime fileTree(dir: 'lib', include: '*.jar')
+    runtime "com.h2database:h2:$h2Ver"
 
     testCompile "junit:junit:$junitVer"
 }
 
+mainClassName = "${group}.dw.Main"
+applicationDefaultJvmArgs = [
+    "-Ddropwizard.config=build/resources/main/conf.yml"
+]
+
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
+    gradleVersion = '2.4'
 }
 
 defaultTasks 'compile'
-
-if (project.hasProperty('env')) {
-    apply from: "gradle/${project.getProperty('env')}.gradle"
-} else {
-    apply from: "gradle/tomcat8.gradle"
-}
