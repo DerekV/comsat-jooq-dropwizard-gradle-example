@@ -5,7 +5,7 @@ group               = 'testgrp'
 version             = '0.1.0-SNAPSHOT'
 status              = 'integration'
 
-ext.classifier      = ''      // ':jdk8'
+ext.classifier      = ':'      // ':jdk8'
 sourceCompatibility = 1.8     // 1.7
 targetCompatibility = 1.8     // 1.7
 
@@ -16,6 +16,7 @@ ext.junitVer        = '4.12'
 ext.slf4jVer        = '1.7.12'
 ext.metricsVer      = '3.1.2'
 ext.jdbiVer         = '2.62'
+ext.httpCoreVer     = '4.4.1'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -32,6 +33,7 @@ configurations.all {
 
         force "org.slf4j:slf4j-api:$slf4jVer"
         force "org.jdbi:jdbi:$jdbiVer"
+        force "org.apache.httpcomponents:httpcore:$httpCoreVer"
     }
 }
 
