@@ -10,8 +10,8 @@ sourceCompatibility = 1.8     // 1.7
 targetCompatibility = 1.8     // 1.7
 
 ext.h2Ver           = '1.4.187'
-ext.comsatVer       = '0.4.0-SNAPSHOT'
-ext.quasarVer       = '0.7.1-SNAPSHOT'
+ext.comsatVer       = '0.4.0'
+ext.quasarVer       = '0.7.2'
 ext.junitVer        = '4.12'
 ext.slf4jVer        = '1.7.12'
 ext.metricsVer      = '3.1.2'
