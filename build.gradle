@@ -9,7 +9,7 @@ ext.classifier      = ''      // ':jdk8'
 sourceCompatibility = 1.8     // 1.7
 targetCompatibility = 1.8     // 1.7
 
-ext.jooqVer         = '3.5.3'
+ext.jooqVer         = '3.6.2'
 ext.dropwizardVer   = '0.8.1'
 ext.slf4jVer        = '1.7.12'
 ext.h2Ver           = '1.4.187'
