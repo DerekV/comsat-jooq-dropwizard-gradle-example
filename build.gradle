@@ -5,16 +5,18 @@ group               = 'testgrp'
 version             = '0.1.0-SNAPSHOT'
 status              = 'integration'
 
-ext.classifier      = ''      // ':jdk8'
+ext.classifier      = ':'      // ':jdk8'
 sourceCompatibility = 1.8     // 1.7
 targetCompatibility = 1.8     // 1.7
 
 ext.h2Ver           = '1.4.187'
-ext.comsatVer       = '0.3.0'
-ext.quasarVer       = '0.6.2'
+ext.comsatVer       = '0.4.0'
+ext.quasarVer       = '0.7.2'
 ext.junitVer        = '4.12'
 ext.slf4jVer        = '1.7.12'
 ext.metricsVer      = '3.1.2'
+ext.jdbiVer         = '2.62'
+ext.httpCoreVer     = '4.4.1'
 ext.guavaVer        = '18.0'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -33,6 +35,8 @@ configurations.all {
         force "com.google.guava:guava:$guavaVer"
 
         force "org.slf4j:slf4j-api:$slf4jVer"
+        force "org.jdbi:jdbi:$jdbiVer"
+        force "org.apache.httpcomponents:httpcore:$httpCoreVer"
     }
 }
 
