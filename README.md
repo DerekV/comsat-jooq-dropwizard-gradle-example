@@ -9,7 +9,7 @@ Just edit `build.gradle`for JVM arguments and system properties, then feel free 
 To run it:
 
 ```
-./gradlew run # CTRL+C to stop
+./gradlew # CTRL+C to stop
 ```
 
 The available services are printed by Dropwizard on stdout during bootstrap.
