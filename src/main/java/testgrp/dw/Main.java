@@ -22,44 +22,49 @@ import org.jooq.RecordMapper;
 
 import static org.jooq.impl.DSL.*;
 
-public class Main extends FiberApplication<Main.JModernConfiguration> {
+public final class Main extends FiberApplication<Main.JModernConfiguration> {
     public static void main(String[] args) throws Exception {
-        new Main().run(new String[] { "server", System.getProperty("dropwizard.config") });
+        new Main().run("server", System.getProperty("dropwizard.config"));
     }
 
     @Override
-    public void fiberRun(JModernConfiguration cfg, Environment env) throws ClassNotFoundException, SQLException {
+    public final void fiberRun(JModernConfiguration cfg, Environment env) throws ClassNotFoundException, SQLException {
         JmxReporter.forRegistry(env.metrics()).build().start(); // JMX reporting
-        DataSource ds = cfg.getDataSourceFactory().build(env.metrics(), "db"); // Dropwizard will monitor the connection pool
+        final DataSource ds = cfg.getDataSourceFactory().build(env.metrics(), "db"); // Dropwizard will monitor the connection pool
         initDB(ds);
         env.jersey().register(new DBResource(FiberDataSource.wrap(ds)));
     }
 
     private void initDB(DataSource ds) throws SQLException {
-        try (Connection conn = ds.getConnection()) {
+        try (final Connection conn = ds.getConnection()) {
             conn.createStatement().execute("create table something (id int primary key auto_increment, name varchar(100))");
 
-            String[] names = {"Gigantic", "Bone Machine", "Hey", "Cactus"};
-            DSLContext context = using(conn);
-            for(int i = 0; i < names.length; i++)
-                context.insertInto(table("something"), field("name")).values(names[i]).execute();
+            final String[] names = {"Gigantic", "Bone Machine", "Hey", "Cactus"};
+            final DSLContext context = using(conn);
+            for (final String name : names)
+                context.insertInto(table("something"), field("name")).values(name).execute();
         }
     }
 
     // YAML Configuration
-    public static class JModernConfiguration extends io.dropwizard.Configuration {
+    static class JModernConfiguration extends io.dropwizard.Configuration {
         @Valid @NotNull @JsonProperty private DataSourceFactory database = new DataSourceFactory();
 
-        public DataSourceFactory getDataSourceFactory() { return database; }
+        DataSourceFactory getDataSourceFactory() { return database; }
     }
 
     @Path("/db")
     @Produces(MediaType.APPLICATION_JSON)
-    public static class DBResource {
+    public static final class DBResource {
         private final DataSource ds;
         private static final RecordMapper<Record, Something> toSomething =
-                record -> new Something(record.getValue(field("id", Integer.class)), record.getValue(field("name", String.class)));
+                record ->
+                    new Something (
+                        record.getValue(field("id", Integer.class)),
+                        record.getValue(field("name", String.class))
+                    );
 
+        @SuppressWarnings("WeakerAccess")
         public DBResource(DataSource ds) throws SQLException {
             this.ds = ds;
         }
@@ -67,8 +72,8 @@ public class Main extends FiberApplication<Main.JModernConfiguration> {
         @Timed
         @POST @Path("/add")
         @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-        public Something add(@FormParam("name") String name) throws SQLException, SuspendExecution {
-            try (Connection conn = ds.getConnection()) {
+        public final Something add(@FormParam("name") String name) throws SQLException, SuspendExecution {
+            try (final Connection conn = ds.getConnection()) {
                 using(conn).insertInto(table("something"), field("name")).values(name).execute();
             }
             return findByName(name);
@@ -77,8 +82,8 @@ public class Main extends FiberApplication<Main.JModernConfiguration> {
         @Timed
         @POST @Path("/update")
         @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-        public Something update(@FormParam("name") String name, @FormParam("id") Integer id) throws SQLException, SuspendExecution {
-            try (Connection conn = ds.getConnection()) {
+        public final Something update(@FormParam("name") String name, @FormParam("id") Integer id) throws SQLException, SuspendExecution {
+            try (final Connection conn = ds.getConnection()) {
                 using(conn).update(table("something")).set(field("name"), name).where(field("id", Integer.class).eq(id)).execute();
             }
             return findById(id);
@@ -87,9 +92,9 @@ public class Main extends FiberApplication<Main.JModernConfiguration> {
         @Timed
         @POST @Path("/delete")
         @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-        public Something delete(@FormParam("id") Integer id) throws SQLException, SuspendExecution {
-            Something ret = findById(id);
-            try (Connection conn = ds.getConnection()) {
+        public final Something delete(@FormParam("id") Integer id) throws SQLException, SuspendExecution {
+            final Something ret = findById(id);
+            try (final Connection conn = ds.getConnection()) {
                 using(conn).delete(table("something")).where(field("id", Integer.class).eq(id)).execute();
             }
             return ret;
@@ -97,8 +102,8 @@ public class Main extends FiberApplication<Main.JModernConfiguration> {
 
         @Timed
         @GET @Path("/item/byId/{id}")
-        public Something findById(@PathParam("id") Integer id) throws SQLException, SuspendExecution {
-            try (Connection conn = ds.getConnection()) {
+        public final Something findById(@PathParam("id") Integer id) throws SQLException, SuspendExecution {
+            try (final Connection conn = ds.getConnection()) {
                 return using(conn).select(field("id"), field("name")).from(table("something"))
                         .where(field("id", Integer.class).equal(id)).fetchOne().map(toSomething);
             }
@@ -106,8 +111,8 @@ public class Main extends FiberApplication<Main.JModernConfiguration> {
 
         @Timed
         @GET @Path("/item/byName/{name}")
-        public Something findByName(@PathParam("name") String name) throws SQLException, SuspendExecution {
-            try (Connection conn = ds.getConnection()) {
+        public final Something findByName(@PathParam("name") String name) throws SQLException, SuspendExecution {
+            try (final Connection conn = ds.getConnection()) {
                 return using(conn).select(field("id"), field("name")).from(table("something"))
                         .where(field("name", String.class).equal(name)).fetchOne().map(toSomething);
             }
@@ -115,13 +120,14 @@ public class Main extends FiberApplication<Main.JModernConfiguration> {
 
         @Timed
         @GET @Path("/all")
-        public List<Something> all() throws SQLException, SuspendExecution {
-            try (Connection conn = ds.getConnection()) {
+        public final List<Something> all() throws SQLException, SuspendExecution {
+            try (final Connection conn = ds.getConnection()) {
                 return using(conn).select(field("id"), field("name")).from(table("something")).fetch().map(toSomething);
             }
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static class Something {
         @JsonProperty public final int id;
         @JsonProperty public final String name;
