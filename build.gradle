@@ -9,10 +9,10 @@ ext.classifier      = ''      // ':jdk8'
 sourceCompatibility = 1.8     // 1.7
 targetCompatibility = 1.8     // 1.7
 
-ext.jooqVer         = '3.6.2'
-ext.dropwizardVer   = '0.8.1'
-ext.slf4jVer        = '1.7.12'
-ext.h2Ver           = '1.4.187'
+ext.jooqVer         = '3.6.4'
+ext.dropwizardVer   = '0.9.2'
+ext.slf4jVer        = '1.7.21'
+ext.h2Ver           = '1.4.191'
 ext.junitVer        = '4.12'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -50,7 +50,7 @@ applicationDefaultJvmArgs = [
 ]
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.4'
+    gradleVersion = '2.12'
 }
 
-defaultTasks 'compile'
+defaultTasks 'run'

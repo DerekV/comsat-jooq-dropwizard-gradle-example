@@ -7,7 +7,7 @@ A single-file Dropwizard embedded Java 1.7+ featuring JAX-RS web services backed
 To run it:
 
 ```
-./gradlew run # CTRL+C to stop
+./gradlew # CTRL+C to stop
 ```
 
 The available services are printed by Dropwizard on stdout during bootstrap.
